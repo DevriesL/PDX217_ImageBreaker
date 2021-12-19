@@ -2280,6 +2280,10 @@ config UNUSED_KSYMS_WHITELIST_ONLY
 	  This is mainly used to detect if drivers are using the symbols
 	  outside of the whitelist.
 
+config MODULE_INJECTOR
+	bool "Inject loadable kernel modules as built-in source code"
+	default y
+
 endif # MODULES
 
 config MODULES_TREE_LOOKUP
