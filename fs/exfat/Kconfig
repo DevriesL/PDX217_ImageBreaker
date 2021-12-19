@@ -37,3 +37,10 @@ config EXFAT_VIRTUAL_XATTR_SELINUX_LABEL
 	  Support for "u:object_r:exfat:s0" was added in Android Pie,
 	  if you're running Oreo or lower, use "u:object_r:vfat:s0" instead.
 
+config EXFAT_USE_FOR_TEXFAT
+	bool "Register exFAT as Tuxera exFAT"
+	default y
+	depends on EXFAT_FS
+	help
+	  If you want to register linux kernel exFAT driver as available for
+	  Tuxera exFAT (texfat), say Y.
