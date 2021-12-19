@@ -17,6 +17,7 @@ struct inject_module {
 };
 
 static const struct inject_module inject_modules[] = {
+	// techpack/audio
 	{ "native_dlkm", NULL },	{ "platform_dlkm", NULL },
 	{ "pinctrl_wcd_dlkm", NULL },	{ "wsa_macro_dlkm", NULL },
 	{ "hdmi_dlkm", NULL },		{ "swr_dmic_dlkm", NULL },
@@ -32,6 +33,8 @@ static const struct inject_module inject_modules[] = {
 	{ "apr_dlkm", NULL },		{ "q6_notifier_dlkm", NULL },
 	{ "q6_pdr_dlkm", NULL },	{ "swr_dlkm", NULL },
 	{ "snd_event_dlkm", NULL },	{ "wcd_core_dlkm", NULL },
+	// Tuxera's exFAT driver
+	{ "texfat", NULL },
 };
 
 bool mod_inject(const char *module_name)
