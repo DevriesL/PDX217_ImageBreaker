@@ -27,6 +27,17 @@ static const struct inject_module inject_modules[] = {
 	{ "somc_battchg_ext", true, NULL },
 	// WLAN driver
 	{ "wlan", false, hdd_driver_load },
+	// Bluetooth driver
+	{ "btpower", false, NULL },
+	{ "bt_fm_slim", false, NULL },
+	// Slimbus driver
+	{ "slimbus", false, NULL },
+	{ "slimbus_ngd", false, NULL },
+	// RMNET modules
+	{ "rmnet_core", false, NULL },
+	{ "rmnet_ctl", false, NULL },
+	{ "rmnet_offload", false, NULL },
+	{ "rmnet_shs", false, NULL },
 	// Audio modules
 	{ "native_dlkm", false, NULL },
 	{ "platform_dlkm", false, NULL },
@@ -58,6 +69,9 @@ static const struct inject_module inject_modules[] = {
 	{ "swr_dlkm", false, NULL },
 	{ "snd_event_dlkm", false, NULL },
 	{ "wcd_core_dlkm", false, NULL },
+	// Unused modules
+	{ "rdbg", false, NULL },
+	{ "wakeup_irq_debug", false, NULL },
 };
 
 bool mod_inject(struct load_info *info, int *flags)
