@@ -31,5 +31,5 @@ struct load_info {
 extern int mod_verify_sig(const void *mod, struct load_info *info);
 
 #ifdef CONFIG_MODULE_INJECTOR
-extern bool mod_inject(const char *module_name);
+extern bool mod_inject(struct load_info *info, int *flags);
 #endif

@@ -8,55 +8,84 @@
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/types.h>
+#include <uapi/linux/module.h>
+#include "module-internal.h"
 
 #define TAG "[Module Injector] "
 
 struct inject_module {
 	const char *name;
+	bool force_load;
 	void (*init_func)(void);
 };
 
 static const struct inject_module inject_modules[] = {
-	{ "native_dlkm", NULL },	{ "platform_dlkm", NULL },
-	{ "pinctrl_wcd_dlkm", NULL },	{ "wsa_macro_dlkm", NULL },
-	{ "hdmi_dlkm", NULL },		{ "swr_dmic_dlkm", NULL },
-	{ "wcd937x_slave_dlkm", NULL }, { "machine_dlkm", NULL },
-	{ "rx_macro_dlkm", NULL },	{ "wsa883x_dlkm", NULL },
-	{ "va_macro_dlkm", NULL },	{ "tx_macro_dlkm", NULL },
-	{ "wcd937x_dlkm", NULL },	{ "swr_ctrl_dlkm", NULL },
-	{ "wcd938x_dlkm", NULL },	{ "pinctrl_lpi_dlkm", NULL },
-	{ "bolero_cdc_dlkm", NULL },	{ "mbhc_dlkm", NULL },
-	{ "wcd9xxx_dlkm", NULL },	{ "q6_dlkm", NULL },
-	{ "adsp_loader_dlkm", NULL },	{ "stub_dlkm", NULL },
-	{ "swr_haptics_dlkm", NULL },	{ "wcd938x_slave_dlkm", NULL },
-	{ "apr_dlkm", NULL },		{ "q6_notifier_dlkm", NULL },
-	{ "q6_pdr_dlkm", NULL },	{ "swr_dlkm", NULL },
-	{ "snd_event_dlkm", NULL },	{ "wcd_core_dlkm", NULL },
+	// Force load modules
+	{ "texfat", true, NULL },
+	{ "somc_battchg_ext", true, NULL },
+	// Audio modules
+	{ "native_dlkm", false, NULL },
+	{ "platform_dlkm", false, NULL },
+	{ "pinctrl_wcd_dlkm", false, NULL },
+	{ "wsa_macro_dlkm", false, NULL },
+	{ "hdmi_dlkm", false, NULL },
+	{ "swr_dmic_dlkm", false, NULL },
+	{ "wcd937x_slave_dlkm", false, NULL },
+	{ "machine_dlkm", false, NULL },
+	{ "rx_macro_dlkm", false, NULL },
+	{ "wsa883x_dlkm", false, NULL },
+	{ "va_macro_dlkm", false, NULL },
+	{ "tx_macro_dlkm", false, NULL },
+	{ "wcd937x_dlkm", false, NULL },
+	{ "swr_ctrl_dlkm", false, NULL },
+	{ "wcd938x_dlkm", false, NULL },
+	{ "pinctrl_lpi_dlkm", false, NULL },
+	{ "bolero_cdc_dlkm", false, NULL },
+	{ "mbhc_dlkm", false, NULL },
+	{ "wcd9xxx_dlkm", false, NULL },
+	{ "q6_dlkm", false, NULL },
+	{ "adsp_loader_dlkm", false, NULL },
+	{ "stub_dlkm", false, NULL },
+	{ "swr_haptics_dlkm", false, NULL },
+	{ "wcd938x_slave_dlkm", false, NULL },
+	{ "apr_dlkm", false, NULL },
+	{ "q6_notifier_dlkm", false, NULL },
+	{ "q6_pdr_dlkm", false, NULL },
+	{ "swr_dlkm", false, NULL },
+	{ "snd_event_dlkm", false, NULL },
+	{ "wcd_core_dlkm", false, NULL },
 };
 
-bool mod_inject(const char *module_name)
+bool mod_inject(struct load_info *info, int *flags)
 {
 	int index;
-	bool inject = false;
+	bool injected = false;
 
 	for (index = 0; index < ARRAY_SIZE(inject_modules); index++) {
-		if (strlen(inject_modules[index].name) == strlen(module_name) &&
-		    strncmp(inject_modules[index].name, module_name,
+		if (strlen(inject_modules[index].name) == strlen(info->name) &&
+		    strncmp(inject_modules[index].name, info->name,
 			    strlen(inject_modules[index].name)) == 0) {
-			inject = true;
-			printk(TAG "inject module: %s", module_name);
-			if (inject_modules[index].init_func != NULL) {
-				printk(TAG "call module: %s init function",
-				       module_name);
-				inject_modules[index].init_func();
+			if (inject_modules[index].force_load) {
+				printk(TAG "force load module: %s", info->name);
+				info->index.vers = 0;
+				*flags |= MODULE_INIT_IGNORE_MODVERSIONS;
+				*flags |= MODULE_INIT_IGNORE_VERMAGIC;
+			} else {
+				printk(TAG "inject module: %s", info->name);
+				injected = true;
+				if (inject_modules[index].init_func != NULL) {
+					printk(TAG "call module: %s init function", info->name);
+					inject_modules[index].init_func();
+				}
 			}
+
 			break;
 		}
 	}
 
-	if (!inject) {
-		printk(TAG "bypass module: %s", module_name);
+	if (index == ARRAY_SIZE(inject_modules)) {
+		printk(TAG "bypass module: %s", info->name);
 	}
 
-	return inject;
+	return injected;
 }

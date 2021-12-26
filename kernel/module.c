@@ -3857,7 +3857,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
 		goto free_copy;
 
 #ifdef CONFIG_MODULE_INJECTOR
-	if (mod_inject(info->name)) {
+	if (mod_inject(info, &flags)) {
 		err = 0;
 		goto free_copy;
 	}
