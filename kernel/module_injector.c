@@ -13,16 +13,20 @@
 
 #define TAG "[Module Injector] "
 
+extern int hdd_driver_load(void);
+
 struct inject_module {
 	const char *name;
 	bool force_load;
-	void (*init_func)(void);
+	int (*init_func)(void);
 };
 
 static const struct inject_module inject_modules[] = {
 	// Force load modules
 	{ "texfat", true, NULL },
 	{ "somc_battchg_ext", true, NULL },
+	// WLAN driver
+	{ "wlan", false, hdd_driver_load },
 	// Audio modules
 	{ "native_dlkm", false, NULL },
 	{ "platform_dlkm", false, NULL },
