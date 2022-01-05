@@ -22,11 +22,20 @@ struct inject_module {
 };
 
 static const struct inject_module inject_modules[] = {
-	// Force load modules
+	// Force load Tuxera exFAT
 	{ "texfat", true, NULL },
+	// Force load somc_battchg_ext without source code
 	{ "somc_battchg_ext", true, NULL },
+	// Force load camera modules
+	{ "camera", true, NULL },
+	{ "sony_camera", true, NULL },
+	{ "camera_sync", true, NULL },
+	{ "slg51000_regulator", true, NULL },
+	{ "tcs3490", true, NULL },
 	// WLAN driver
 	{ "wlan", false, hdd_driver_load },
+	// Samsung touchscreen driver
+	{ "sec_touchscreen", false, NULL },
 	// Bluetooth driver
 	{ "btpower", false, NULL },
 	{ "bt_fm_slim", false, NULL },
